@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    container_name: football_events_app
+    ports:
+      - "8888:8000" # FIXME change host port to 8000
+    volumes:
+      - .:/app
+    working_dir: /app

@@ -24,14 +24,14 @@ class EventApiCest
             'minute' => 45,
             'second' => 34
         ]);
-        
+
         $I->seeResponseCodeIs(201);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
             'status' => 'success',
             'message' => 'Event saved successfully'
         ]);
-        $I->seeResponseJsonMatchesJsonPath('$.event.type', 'foul');
+        $I->seeResponseJsonMatchesJsonPath('$.data.event.type', 'foul');
     }
 
     public function testFoulEventWithoutRequiredFields(ApiTester $I)
@@ -44,7 +44,7 @@ class EventApiCest
             'second' => 34
             // Missing team_id and match_id
         ]);
-        
+
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
@@ -56,7 +56,7 @@ class EventApiCest
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPOST('/event', 'invalid json');
-        
+
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
@@ -72,7 +72,7 @@ class EventApiCest
             'minute' => 23,
             'second' => 34
         ]);
-        
+
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([

@@ -2,15 +2,20 @@
 
 namespace App\Domain\Event;
 
+use App\Infrastructure\Persistence\Event\EventStorageInterface;
+use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
+use App\Infrastructure\Persistence\Statistics\StatisticsStorageInterface;
+use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
+
 class EventHandler
 {
-    private FileStorage $storage;
-    private StatisticsManager $statisticsManager;
+    private EventStorageInterface $storage;
+    private StatisticsStorageInterface $statisticsStorage;
 
-    public function __construct(string $storagePath, ?StatisticsManager $statisticsManager = null)
+    public function __construct(string $storagePath, ?StatisticsStorageInterface $statisticsManager = null)
     {
-        $this->storage = new FileStorage($storagePath);
-        $this->statisticsManager = $statisticsManager ?? new StatisticsManager(__DIR__ . '/../../../storage/statistics.txt');
+        $this->storage = new JsonFileEventStorage($storagePath);
+        $this->statisticsStorage = $statisticsManager ?? new JsonFileStatisticsStorage(__DIR__ . '/../../../storage/statistics.txt');
     }
 
     public function handleEvent(array $data): array
@@ -33,7 +38,7 @@ class EventHandler
                 throw new \InvalidArgumentException('match_id and team_id are required for foul events');
             }
 
-            $this->statisticsManager->updateTeamStatistics(
+            $this->statisticsStorage->updateTeamStatistics(
                 $data['match_id'],
                 $data['team_id'],
                 'fouls'

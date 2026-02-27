@@ -1,13 +1,13 @@
 <?php
+declare(strict_types=1);
 
-namespace App\Domain\Event;
+namespace App\Infrastructure\Persistence\Event;
 
-class FileStorage
+class JsonFileEventStorage implements EventStorageInterface
 {
-    private string $filePath;
-
-    public function __construct(string $filePath)
-    {
+    public function __construct(
+        private string $filePath
+    ) {
         $this->filePath = $filePath;
 
         $directory = dirname($filePath);

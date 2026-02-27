@@ -3,8 +3,8 @@
 namespace Tests;
 
 use App\Domain\Event\EventHandler;
-use App\Domain\Event\FileStorage;
-use App\Domain\Event\StatisticsManager;
+use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
+use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
 use PHPUnit\Framework\TestCase;
 
 class EventHandlerTest extends TestCase
@@ -58,7 +58,7 @@ class EventHandlerTest extends TestCase
 
     public function testEventIsSavedToFile(): void
     {
-        $storage = new FileStorage($this->testFile);
+        $storage = new JsonFileEventStorage($this->testFile);
         $handler = new EventHandler($this->testFile);
 
         $eventData = [
@@ -76,7 +76,7 @@ class EventHandlerTest extends TestCase
 
     public function testHandleFoulEventUpdatesStatistics(): void
     {
-        $statisticsManager = new StatisticsManager($this->testStatsFile);
+        $statisticsManager = new JsonFileStatisticsStorage($this->testStatsFile);
         $handler = new EventHandler($this->testFile, $statisticsManager);
 
         $eventData = [
@@ -102,7 +102,7 @@ class EventHandlerTest extends TestCase
 
     public function testHandleMultipleFoulEventsIncrementsStatistics(): void
     {
-        $statisticsManager = new StatisticsManager($this->testStatsFile);
+        $statisticsManager = new JsonFileStatisticsStorage($this->testStatsFile);
         $handler = new EventHandler($this->testFile, $statisticsManager);
 
         $eventData1 = [
@@ -136,7 +136,7 @@ class EventHandlerTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('match_id and team_id are required for foul events');
 
-        $statisticsManager = new StatisticsManager($this->testStatsFile);
+        $statisticsManager = new JsonFileStatisticsStorage($this->testStatsFile);
         $handler = new EventHandler($this->testFile, $statisticsManager);
 
         $eventData = [

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Application\Actions;
 
 use App\Application\Actions\Action;
-use App\Domain\Event\StatisticsManager;
+use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
 use Psr\Http\Message\ResponseInterface as Response;
 
 class StatisticsAction extends Action
@@ -14,7 +14,7 @@ class StatisticsAction extends Action
      */
     protected function action(): Response
     {
-        $statsManager = new StatisticsManager(__DIR__ . '/../../../storage/statistics.txt');
+        $statsManager = new JsonFileStatisticsStorage(__DIR__ . '/../../../storage/statistics.txt');
 
         $matchId = $_GET['match_id'] ?? null;
         $teamId = $_GET['team_id'] ?? null;

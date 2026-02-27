@@ -1,15 +1,19 @@
 <?php
 
-namespace App\Domain\Event;
+namespace App\Infrastructure\Persistence\Statistics;
 
-class StatisticsManager
+use App\Infrastructure\Persistence\Event\EventStorageInterface;
+use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
+
+class JsonFileStatisticsStorage implements StatisticsStorageInterface
 {
-    private FileStorage $storage;
+    private EventStorageInterface $storage;
+
     private string $statsFile;
 
     public function __construct(string $statsFile = '../../../storage/statistics.txt')
     {
-        $this->storage = new FileStorage($statsFile);
+        $this->storage = new JsonFileEventStorage($statsFile);
         $this->statsFile = $statsFile;
 
         $directory = dirname($statsFile);

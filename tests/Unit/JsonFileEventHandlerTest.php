@@ -7,7 +7,7 @@ use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
 use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
 use PHPUnit\Framework\TestCase;
 
-class EventHandlerTest extends TestCase
+class JsonFileEventHandlerTest extends TestCase
 {
     private string $testFile;
     private string $testStatsFile;
@@ -30,7 +30,10 @@ class EventHandlerTest extends TestCase
 
     public function testHandleGoalEvent(): void
     {
-        $handler = new EventHandler($this->testFile);
+        $handler = new EventHandler(
+            new JsonFileEventStorage($this->testFile),
+            new JsonFileStatisticsStorage($this->testStatsFile)
+        );
 
         $eventData = [
             'type' => 'goal',
@@ -51,7 +54,10 @@ class EventHandlerTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Event type is required');
 
-        $handler = new EventHandler($this->testFile);
+        $handler = new EventHandler(
+            new JsonFileEventStorage($this->testFile),
+            new JsonFileStatisticsStorage($this->testStatsFile)
+        );
 
         $handler->handleEvent([]);
     }
@@ -59,7 +65,10 @@ class EventHandlerTest extends TestCase
     public function testEventIsSavedToFile(): void
     {
         $storage = new JsonFileEventStorage($this->testFile);
-        $handler = new EventHandler($this->testFile);
+        $handler = new EventHandler(
+            $storage,
+            new JsonFileStatisticsStorage($this->testStatsFile)
+        );
 
         $eventData = [
             'type' => 'goal',
@@ -76,8 +85,11 @@ class EventHandlerTest extends TestCase
 
     public function testHandleFoulEventUpdatesStatistics(): void
     {
-        $statisticsManager = new JsonFileStatisticsStorage($this->testStatsFile);
-        $handler = new EventHandler($this->testFile, $statisticsManager);
+        $statsStorage = new JsonFileStatisticsStorage($this->testStatsFile);
+        $handler = new EventHandler(
+            new JsonFileEventStorage($this->testFile),
+            $statsStorage
+        );
 
         $eventData = [
             'type' => 'foul',
@@ -95,15 +107,18 @@ class EventHandlerTest extends TestCase
         $this->assertEquals('foul', $result['event']['type']);
 
         // Check that statistics were updated
-        $teamStats = $statisticsManager->getTeamStatistics('m1', 'arsenal');
+        $teamStats = $statsStorage->getTeamStatistics('m1', 'arsenal');
         $this->assertArrayHasKey('fouls', $teamStats);
         $this->assertEquals(1, $teamStats['fouls']);
     }
 
     public function testHandleMultipleFoulEventsIncrementsStatistics(): void
     {
-        $statisticsManager = new JsonFileStatisticsStorage($this->testStatsFile);
-        $handler = new EventHandler($this->testFile, $statisticsManager);
+        $statsStorage = new JsonFileStatisticsStorage($this->testStatsFile);
+        $handler = new EventHandler(
+            new JsonFileEventStorage($this->testFile),
+            $statsStorage
+        );
 
         $eventData1 = [
             'type' => 'foul',
@@ -127,7 +142,7 @@ class EventHandlerTest extends TestCase
         $handler->handleEvent($eventData2);
 
         // Check that statistics were incremented correctly
-        $teamStats = $statisticsManager->getTeamStatistics('match_1', 'team_a');
+        $teamStats = $statsStorage->getTeamStatistics('match_1', 'team_a');
         $this->assertEquals(2, $teamStats['fouls']);
     }
 
@@ -136,8 +151,11 @@ class EventHandlerTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('match_id and team_id are required for foul events');
 
-        $statisticsManager = new JsonFileStatisticsStorage($this->testStatsFile);
-        $handler = new EventHandler($this->testFile, $statisticsManager);
+        $statsStorage = new JsonFileStatisticsStorage($this->testStatsFile);
+        $handler = new EventHandler(
+            new JsonFileEventStorage($this->testFile),
+            $statsStorage
+        );
 
         $eventData = [
             'type' => 'foul',

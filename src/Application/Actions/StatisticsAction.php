@@ -4,25 +4,30 @@ declare(strict_types=1);
 namespace App\Application\Actions;
 
 use App\Application\Actions\Action;
-use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
+use App\Infrastructure\Persistence\Statistics\StatisticsStorageInterface;
 use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Log\LoggerInterface;
 
 class StatisticsAction extends Action
 {
+    public function __construct(
+        protected LoggerInterface $logger,
+        protected StatisticsStorageInterface $statsStorage
+    ) {
+    }
+
     /**
      * {@inheritdoc}
      */
     protected function action(): Response
     {
-        $statsManager = new JsonFileStatisticsStorage(__DIR__ . '/../../../storage/statistics.txt');
-
         $matchId = $_GET['match_id'] ?? null;
         $teamId = $_GET['team_id'] ?? null;
 
         try {
             if ($matchId && $teamId) {
                 // Get team statistics for specific match
-                $stats = $statsManager->getTeamStatistics($matchId, $teamId);
+                $stats = $this->statsStorage->getTeamStatistics($matchId, $teamId);
 
                 return $this->respondWithData([
                     'match_id' => $matchId,
@@ -31,7 +36,7 @@ class StatisticsAction extends Action
                 ]);
             } elseif ($matchId) {
                 // Get all team statistics for specific match
-                $stats = $statsManager->getMatchStatistics($matchId);
+                $stats = $this->statsStorage->getMatchStatistics($matchId);
 
                 return $this->respondWithData([
                     'match_id' => $matchId,

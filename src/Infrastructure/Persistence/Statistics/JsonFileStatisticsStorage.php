@@ -11,7 +11,7 @@ class JsonFileStatisticsStorage implements StatisticsStorageInterface
 
     private string $statsFile;
 
-    public function __construct(string $statsFile = '../../../storage/statistics.txt')
+    public function __construct(string $statsFile = __DIR__ . '/../storage/statistics.txt')
     {
         $this->storage = new JsonFileEventStorage($statsFile);
         $this->statsFile = $statsFile;
@@ -46,12 +46,14 @@ class JsonFileStatisticsStorage implements StatisticsStorageInterface
     public function getTeamStatistics(string $matchId, string $teamId): array
     {
         $stats = $this->getStatistics();
+
         return $stats[$matchId][$teamId] ?? [];
     }
 
     public function getMatchStatistics(string $matchId): array
     {
         $stats = $this->getStatistics();
+
         return $stats[$matchId] ?? [];
     }
 
@@ -62,6 +64,7 @@ class JsonFileStatisticsStorage implements StatisticsStorageInterface
         }
 
         $content = file_get_contents($this->statsFile);
+
         return json_decode($content, true) ?? [];
     }
 

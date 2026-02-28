@@ -6,9 +6,16 @@ namespace App\Application\Actions;
 use App\Application\Actions\Action;
 use App\Domain\Event\EventHandler;
 use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Log\LoggerInterface;
 
 class EventAction extends Action
 {
+    public function __construct(
+        protected LoggerInterface $logger,
+        protected EventHandler $handler,
+    ) {
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -21,10 +28,8 @@ class EventAction extends Action
             return $this->respondWithData(['error' => 'Invalid JSON'], 400);
         }
 
-        $handler = new EventHandler(__DIR__ . '/../../../storage/events.txt');
-
         try {
-            $result = $handler->handleEvent($data);
+            $result = $this->handler->handleEvent($data);
 
             return $this->respondWithData($result, 201);
         } catch (\Exception $e) {

@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use App\Domain\DTO\Event\EventDataDTO;
+use App\Domain\DTO\Event\EventDTO;
 use App\Domain\Event\EventHandler;
 use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
 use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
@@ -35,18 +37,18 @@ class JsonFileEventHandlerTest extends TestCase
             new JsonFileStatisticsStorage($this->testStatsFile)
         );
 
-        $eventData = [
-            'type' => 'goal',
-            'player' => 'John Doe',
-            'minute' => 23,
-            'second' => 34
-        ];
+        $result = $handler->handleEvent(
+        new EventDataDTO(
+                type: EventDTO::EVENT_TYPE_GOAL,
+                player: 'John Doe',
+                teamId: 23,
+                matchId: 34
+            )
+        );
 
-        $result = $handler->handleEvent($eventData);
-
-        $this->assertEquals('success', $result['status']);
-        $this->assertEquals('goal', $result['event']['type']);
-        $this->assertArrayHasKey('timestamp', $result['event']);
+        $this->assertEquals('success', $result->status);
+        $this->assertEquals('goal', $result->event->type);
+        $this->assertObjectHasProperty('timestamp', $result->event);
     }
 
     public function testHandleEventWithoutType(): void
@@ -59,7 +61,7 @@ class JsonFileEventHandlerTest extends TestCase
             new JsonFileStatisticsStorage($this->testStatsFile)
         );
 
-        $handler->handleEvent([]);
+        $handler->handleEvent(new EventDataDTO());
     }
 
     public function testEventIsSavedToFile(): void
@@ -75,7 +77,9 @@ class JsonFileEventHandlerTest extends TestCase
             'player' => 'Jane Smith'
         ];
 
-        $handler->handleEvent($eventData);
+        $handler->handleEvent(
+            new EventDataDTO(EventDTO::EVENT_TYPE_GOAL, 'Jane Smith')
+        );
 
         $this->assertFileExists($this->testFile);
         $savedEvents = $storage->getAll();
@@ -91,20 +95,13 @@ class JsonFileEventHandlerTest extends TestCase
             $statsStorage
         );
 
-        $eventData = [
-            'type' => 'foul',
-            'player' => 'William Saliba',
-            'team_id' => 'arsenal',
-            'match_id' => 'm1',
-            'minute' => 45,
-            'second' => 34
-        ];
-
-        $result = $handler->handleEvent($eventData);
+        $result = $handler->handleEvent(
+            new EventDataDTO(EventDTO::EVENT_TYPE_FOUL, 'William Saliba', 'arsenal', 'm1', 45, 34)
+        );
 
         // Check that event was saved successfully
-        $this->assertEquals('success', $result['status']);
-        $this->assertEquals('foul', $result['event']['type']);
+        $this->assertEquals('success', $result->status);
+        $this->assertEquals('foul', $result->event->type);
 
         // Check that statistics were updated
         $teamStats = $statsStorage->getTeamStatistics('m1', 'arsenal');
@@ -120,26 +117,12 @@ class JsonFileEventHandlerTest extends TestCase
             $statsStorage
         );
 
-        $eventData1 = [
-            'type' => 'foul',
-            'player' => 'John Doe',
-            'team_id' => 'team_a',
-            'match_id' => 'match_1',
-            'minute' => 15,
-            'second' => 34
-        ];
-
-        $eventData2 = [
-            'type' => 'foul',
-            'player' => 'Jane Smith',
-            'team_id' => 'team_a',
-            'match_id' => 'match_1',
-            'minute' => 30,
-            'second' => 34
-        ];
-
-        $handler->handleEvent($eventData1);
-        $handler->handleEvent($eventData2);
+        $handler->handleEvent(
+            new EventDataDTO(EventDTO::EVENT_TYPE_FOUL, 'John Doe', 'team_a', 'match_1', 15, 34)
+        );
+        $handler->handleEvent(
+            new EventDataDTO(EventDTO::EVENT_TYPE_FOUL, 'Jane Smith', 'team_a', 'match_1', 30, 34)
+        );
 
         // Check that statistics were incremented correctly
         $teamStats = $statsStorage->getTeamStatistics('match_1', 'team_a');
@@ -157,14 +140,8 @@ class JsonFileEventHandlerTest extends TestCase
             $statsStorage
         );
 
-        $eventData = [
-            'type' => 'foul',
-            'player' => 'John Doe',
-            'minute' => 45,
-            'second' => 34
-            // Missing match_id and team_id
-        ];
-
-        $handler->handleEvent($eventData);
+        $handler->handleEvent(
+            new EventDataDTO(EventDTO::EVENT_TYPE_FOUL, 'John Doe', minute: 45, second: 34)
+        );
     }
 }

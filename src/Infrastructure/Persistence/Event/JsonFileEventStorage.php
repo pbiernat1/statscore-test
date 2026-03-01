@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Event;
 
+use App\Domain\DTO\Event\EventDTO;
+
 class JsonFileEventStorage implements EventStorageInterface
 {
     public function __construct(
@@ -16,9 +18,9 @@ class JsonFileEventStorage implements EventStorageInterface
         }
     }
 
-    public function save(array $event): void
+    public function save(EventDTO $eventDTO): void
     {
-        $line = json_encode($event) . PHP_EOL;
+        $line = json_encode($eventDTO) . PHP_EOL;
         file_put_contents($this->filePath, $line, FILE_APPEND | LOCK_EX);
     }
 

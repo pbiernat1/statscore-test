@@ -5,6 +5,9 @@ namespace App\Domain\Event;
 
 use App\Infrastructure\Persistence\Event\EventStorageInterface;
 use App\Infrastructure\Persistence\Statistics\StatisticsStorageInterface;
+use App\Domain\DTO\Event\EventDTO;
+use App\Domain\DTO\Event\EventDataDTO;
+use App\Domain\Response\Event;
 
 class EventHandler
 {
@@ -14,37 +17,24 @@ class EventHandler
     ) {
     }
 
-    public function handleEvent(array $data): array
+    public function handleEvent(EventDataDTO $data): Event
     {
-        if (!isset($data['type'])) {
-            throw new \InvalidArgumentException('Event type is required');
-        }
-
-        $event = [
-            'type' => $data['type'],
-            'timestamp' => time(),
-            'data' => $data
-        ];
-
-        $this->eventStorage->save($event);
+        $eventDTO = new EventDTO($data->type, time(), $data);
+        $this->eventStorage->save($eventDTO);
 
         // Update statistics for foul events
-        if ($data['type'] === 'foul') {
-            if (!isset($data['match_id']) || !isset($data['team_id'])) {
+        if ($data->type === EventDTO::EVENT_TYPE_FOUL) {
+            if (!isset($data->matchId) || !isset($data->teamId)) {
                 throw new \InvalidArgumentException('match_id and team_id are required for foul events');
             }
 
             $this->statsStorage->updateTeamStatistics(
-                $data['match_id'],
-                $data['team_id'],
+                $data->matchId,
+                $data->teamId,
                 'fouls'
             );
         }
 
-        return [
-            'status' => 'success',
-            'message' => 'Event saved successfully',
-            'event' => $event
-        ];
+        return new Event('success', 'Event saved successfully', $eventDTO);
     }
 }

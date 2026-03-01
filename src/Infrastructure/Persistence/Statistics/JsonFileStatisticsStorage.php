@@ -64,7 +64,6 @@ class JsonFileStatisticsStorage implements StatisticsStorageInterface
         }
 
         $content = file_get_contents($this->statsFile);
-
         return json_decode($content, true) ?? [];
     }
 

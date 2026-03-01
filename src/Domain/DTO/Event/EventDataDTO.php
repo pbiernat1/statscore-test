@@ -17,4 +17,16 @@ final readonly class EventDataDTO
             throw new \InvalidArgumentException('Event type is required');
         }
     }
+
+    public static function fromArray(array $array): EventDataDTO
+    {
+        return new self(
+            $array['type'],
+            $array['player'],
+            $array['teamId'],
+            $array['matchId'],
+            $array['minute'],
+            $array['second']
+        );
+    }
 }

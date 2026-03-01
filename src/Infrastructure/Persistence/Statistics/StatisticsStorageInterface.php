@@ -5,7 +5,7 @@ namespace App\Infrastructure\Persistence\Statistics;
 
 interface StatisticsStorageInterface
 {
-    public function updateTeamStatistics(string $matchId, string $teamId, string $statType, int $value = 1): void;
+    public function updateTeamStatistics(string $matchId, string $teamId, string $eventType, int $value = 1): void;
 
     public function getTeamStatistics(string $matchId, string $teamId): array;
 

@@ -22,7 +22,7 @@ class JsonFileStatisticsStorage implements StatisticsStorageInterface
         }
     }
 
-    public function updateTeamStatistics(string $matchId, string $teamId, string $statType, int $value = 1): void
+    public function updateTeamStatistics(string $matchId, string $teamId, string $eventType, int $value = 1): void
     {
         $stats = $this->getStatistics();
 
@@ -34,11 +34,11 @@ class JsonFileStatisticsStorage implements StatisticsStorageInterface
             $stats[$matchId][$teamId] = [];
         }
 
-        if (!isset($stats[$matchId][$teamId][$statType])) {
-            $stats[$matchId][$teamId][$statType] = 0;
+        if (!isset($stats[$matchId][$teamId][$eventType])) {
+            $stats[$matchId][$teamId][$eventType] = 0;
         }
 
-        $stats[$matchId][$teamId][$statType] += $value;
+        $stats[$matchId][$teamId][$eventType] += $value;
 
         $this->saveStatistics($stats);
     }

@@ -10,8 +10,6 @@ class JsonFileEventStorage implements EventStorageInterface
     public function __construct(
         private string $filePath
     ) {
-        $this->filePath = $filePath;
-
         $directory = dirname($filePath);
         if (!is_dir($directory)) {
             mkdir($directory, 0777, true);
@@ -24,6 +22,9 @@ class JsonFileEventStorage implements EventStorageInterface
         file_put_contents($this->filePath, $line, FILE_APPEND | LOCK_EX);
     }
 
+    /**
+     * @return array[EventDTO]
+     */
     public function getAll(): array
     {
         if (!file_exists($this->filePath)) {
@@ -34,7 +35,8 @@ class JsonFileEventStorage implements EventStorageInterface
         $lines = explode(PHP_EOL, trim($content));
 
         return array_map(function($line) {
-            return json_decode($line, true);
+            $data = json_decode($line, true);
+            return EventDTO::fromArray($data);
         }, array_filter($lines));
     }
 }

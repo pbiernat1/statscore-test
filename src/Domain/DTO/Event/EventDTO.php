@@ -15,4 +15,13 @@ final readonly class EventDTO
         public EventDataDTO $data
     ) {
     }
+
+    public static function fromArray(array $array): EventDTO
+    {
+        return new self(
+            $array['type'],
+            $array['timestamp'],
+            EventDataDTO::fromArray($array['data'])
+        );
+    }
 }

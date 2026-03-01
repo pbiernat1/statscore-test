@@ -84,7 +84,7 @@ class JsonFileEventHandlerTest extends TestCase
         $this->assertFileExists($this->testFile);
         $savedEvents = $storage->getAll();
         $this->assertCount(1, $savedEvents);
-        $this->assertEquals('goal', $savedEvents[0]['type']);
+        $this->assertEquals('goal', $savedEvents[0]->type);
     }
 
     public function testHandleFoulEventUpdatesStatistics(): void

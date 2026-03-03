@@ -39,7 +39,7 @@ return function (ContainerBuilder $containerBuilder) {
                 ->get('eventStorage')
             ;
 
-            return new JsonFileEventStorage($conf['jsonFilePath']);
+            // return new JsonFileEventStorage($conf['jsonFilePath']);
             $redisClient = new RedisClient([
                 'scheme' => 'tcp',
                 'host' => $conf['redisHost'],
@@ -54,7 +54,7 @@ return function (ContainerBuilder $containerBuilder) {
                 ->get('statisticsStorage')
             ;
 
-            return new JsonFileStatisticsStorage($conf['jsonFilePath']);
+            // return new JsonFileStatisticsStorage($conf['jsonFilePath']);
             $redisClient = new RedisClient([
                 'scheme' => 'tcp',
                 'host' => $conf['redisHost'],

@@ -40,7 +40,7 @@ class JsonFileEventHandlerTest extends TestCase
 
         $result = $handler->handleEvent(
         new EventDataDTO(
-                type: EventDTO::EVENT_TYPE_GOAL,
+                type: EventDTO::TYPE_GOAL,
                 player: 'John Doe',
                 teamId: 23,
                 matchId: 34
@@ -48,7 +48,7 @@ class JsonFileEventHandlerTest extends TestCase
         );
 
         $this->assertEquals('success', $result->status);
-        $this->assertEquals(EventDTO::EVENT_TYPE_GOAL, $result->event->type);
+        $this->assertEquals(EventDTO::TYPE_GOAL, $result->event->type);
         $this->assertObjectHasProperty('timestamp', $result->event);
     }
 
@@ -74,13 +74,13 @@ class JsonFileEventHandlerTest extends TestCase
         );
 
         $handler->handleEvent(
-            new EventDataDTO(type: EventDTO::EVENT_TYPE_GOAL, player: 'Jane Smith', teamId: 'arsenal', matchId: 'm1')
+            new EventDataDTO(type: EventDTO::TYPE_GOAL, player: 'Jane Smith', teamId: 'arsenal', matchId: 'm1')
         );
 
         $this->assertFileExists($this->testFile);
         $savedEvents = $storage->getAll();
         $this->assertCount(1, $savedEvents);
-        $this->assertEquals(EventDTO::EVENT_TYPE_GOAL, $savedEvents[0]->type);
+        $this->assertEquals(EventDTO::TYPE_GOAL, $savedEvents[0]->type);
     }
 
     public function testHandleFoulEventUpdatesStatistics(): void
@@ -92,12 +92,12 @@ class JsonFileEventHandlerTest extends TestCase
         );
 
         $result = $handler->handleEvent(
-            new EventDataDTO(EventDTO::EVENT_TYPE_FOUL, 'William Saliba', 'arsenal', 'm1', 45, 34)
+            new EventDataDTO(EventDTO::TYPE_FOUL, 'William Saliba', 'arsenal', 'm1', 45, 34)
         );
 
         // Check that event was saved successfully
         $this->assertEquals('success', $result->status);
-        $this->assertEquals(EventDTO::EVENT_TYPE_FOUL, $result->event->type);
+        $this->assertEquals(EventDTO::TYPE_FOUL, $result->event->type);
 
         // Check that statistics were updated
         $teamStats = $statsStorage->getTeamStatistics('m1', 'arsenal');
@@ -114,10 +114,10 @@ class JsonFileEventHandlerTest extends TestCase
         );
 
         $handler->handleEvent(
-            new EventDataDTO(EventDTO::EVENT_TYPE_FOUL, 'John Doe', 'team_a', 'match_1', 15, 34)
+            new EventDataDTO(EventDTO::TYPE_FOUL, 'John Doe', 'team_a', 'match_1', 15, 34)
         );
         $handler->handleEvent(
-            new EventDataDTO(EventDTO::EVENT_TYPE_FOUL, 'Jane Smith', 'team_a', 'match_1', 30, 34)
+            new EventDataDTO(EventDTO::TYPE_FOUL, 'Jane Smith', 'team_a', 'match_1', 30, 34)
         );
 
         // Check that statistics were incremented correctly
@@ -137,7 +137,7 @@ class JsonFileEventHandlerTest extends TestCase
         );
 
         $handler->handleEvent(
-            new EventDataDTO(type: EventDTO::EVENT_TYPE_FOUL, player: 'John Doe', minute: 45, second: 34)
+            new EventDataDTO(type: EventDTO::TYPE_FOUL, player: 'John Doe', minute: 45, second: 34)
         );
     }
 }

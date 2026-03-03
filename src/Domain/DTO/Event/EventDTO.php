@@ -5,9 +5,9 @@ namespace App\Domain\DTO\Event;
 
 final readonly class EventDTO
 {
-    public const EVENT_TYPE_GOAL = 'goal';
+    public const TYPE_GOAL = 'goal';
 
-    public const EVENT_TYPE_FOUL = 'foul';
+    public const TYPE_FOUL = 'foul';
     
     public function __construct(
         public string $type,

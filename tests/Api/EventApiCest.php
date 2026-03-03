@@ -19,7 +19,7 @@ class EventApiCest
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPOST('/event', [
-            'type' => EventDTO::EVENT_TYPE_FOUL,
+            'type' => EventDTO::TYPE_FOUL,
             'player' => 'William Saliba',
             'team_id' => 'arsenal',
             'match_id' => 'm1',
@@ -40,7 +40,7 @@ class EventApiCest
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPOST('/event', [
-            'type' => EventDTO::EVENT_TYPE_FOUL,
+            'type' => EventDTO::TYPE_FOUL,
             'player' => 'William Saliba',
                 'minute' => 45,
             'second' => 34

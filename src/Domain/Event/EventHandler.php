@@ -23,8 +23,8 @@ class EventHandler
         $this->eventStorage->save($eventDTO);
 
         $eventType = match ($data->type) {
-            EventDTO::EVENT_TYPE_GOAL => StatisticsStorageInterface::TYPE_GOALS,
-            EventDTO::EVENT_TYPE_FOUL => StatisticsStorageInterface::TYPE_FOULS,
+            EventDTO::TYPE_GOAL => StatisticsStorageInterface::TYPE_GOALS,
+            EventDTO::TYPE_FOUL => StatisticsStorageInterface::TYPE_FOULS,
         };
 
         $this->statsStorage->updateTeamStatistics(

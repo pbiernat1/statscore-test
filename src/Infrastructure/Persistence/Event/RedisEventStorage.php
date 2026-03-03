@@ -8,9 +8,9 @@ use App\Domain\DTO\Event\EventDTO;
 
 class RedisEventStorage implements EventStorageInterface
 {
-    private const KEY_MATCH  = 'football:events:%s';
+    private const PATTERN_MATCH  = 'football:events:%s';
 
-    private const KEY_GLOBAL = 'football:events:all';
+    private const PATTERN_GLOBAL = 'football:events:all';
 
     public function __construct(private readonly RedisClient $redis)
     {
@@ -20,8 +20,8 @@ class RedisEventStorage implements EventStorageInterface
     {
         $json = json_encode($eventDTO);
 
-        $this->redis->rpush(sprintf(self::KEY_MATCH, $eventDTO->data->matchId), [$json]);
-        $this->redis->rpush(self::KEY_GLOBAL, [$json]);
+        $this->redis->rpush(sprintf(self::PATTERN_MATCH, $eventDTO->data->matchId), [$json]);
+        $this->redis->rpush(self::PATTERN_GLOBAL, [$json]);
     }
 
     /**
@@ -29,7 +29,7 @@ class RedisEventStorage implements EventStorageInterface
      */
     public function getAll(): array
     {
-        $items  = $this->redis->lrange(self::KEY_GLOBAL, 0, -1);
+        $items  = $this->redis->lrange(self::PATTERN_GLOBAL, 0, -1);
 
         return array_map(function (string $item) {
             $data = json_decode($item, true);

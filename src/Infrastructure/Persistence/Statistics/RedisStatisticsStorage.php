@@ -31,20 +31,17 @@ class RedisStatisticsStorage implements StatisticsStorageInterface
     {
         $key = $this->buildKey($matchId, '*');
         $keys = $this->redis->keys($key);
-        $teams = [];
+        $stats = [];
 
         foreach ($keys as $key) {
             $parts = explode(':', $key);
             $teamId = end($parts);
-            $stats = $this->redis->hgetall($key);
+            $data = $this->redis->hgetall($key);
 
-            $teams[$teamId] = $this->castIntegers($stats);
+            $stats[$teamId] = $this->castIntegers($data);
         }
 
-        return [
-            'match_id' => $matchId,
-            'teams' => $teams,
-        ];
+        return $stats;
     }
 
     public function getTeamStatistics(string $matchId, string $teamId): array
@@ -52,11 +49,7 @@ class RedisStatisticsStorage implements StatisticsStorageInterface
         $key = $this->buildKey($matchId, $teamId);
         $stats = $this->redis->hgetall($key);
 
-        return [
-            'match_id' => $matchId,
-            'team_id' => $teamId,
-            'stats' => $this->castIntegers($stats),
-        ];
+        return $this->castIntegers($stats);
     }
 
     private function buildKey(string $matchId, string $teamId): string

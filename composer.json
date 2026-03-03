@@ -8,7 +8,8 @@
         "slim/slim": "^4.15",
         "slim/psr7": "^1.8",
         "php-di/php-di": "^7.1",
-        "monolog/monolog": "^3.10"
+        "monolog/monolog": "^3.10",
+        "predis/predis": "^3.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.0",
@@ -16,7 +17,8 @@
         "codeception/module-phpbrowser": "*",
         "codeception/module-asserts": "*",
         "codeception/module-rest": "^3.4",
-        "phpstan/phpstan": "^2.1"
+        "phpstan/phpstan": "^2.1",
+        "codeception/module-redis": "^3.2"
     },
     "autoload": {
         "psr-4": {

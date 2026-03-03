@@ -22,9 +22,13 @@ return function (ContainerBuilder $containerBuilder) {
                 ],
                 'eventStorage' => [
                     'jsonFilePath' => __DIR__ . '/../storage/events.txt',
+                    'redisHost' => 'redis',
+                    'redisPort' => 6379,
                 ],
                 'statisticsStorage' => [
                     'jsonFilePath' => __DIR__ . '/../storage/statistics.txt',
+                    'redisHost' => 'redis',
+                    'redisPort' => 6379,
                 ]
             ]);
         }

@@ -4,6 +4,10 @@ modules:
         - REST:
             url: http://localhost:8000
             depends: PhpBrowser
+        - Redis:
+            host: redis
+            port: 6379
+            database: 0
         - Asserts
         - Tests\Support\Helper\FileHelper
     config:

@@ -32,11 +32,12 @@ class JsonFileEventStorage implements EventStorageInterface
         }
 
         $content = file_get_contents($this->filePath);
-        $lines = explode(PHP_EOL, trim($content));
+        $items = explode(PHP_EOL, trim($content));
 
-        return array_map(function($line) {
-            $data = json_decode($line, true);
+        return array_map(function($item) {
+            $data = json_decode($item, true);
+
             return EventDTO::fromArray($data);
-        }, array_filter($lines));
+        }, array_filter($items));
     }
 }

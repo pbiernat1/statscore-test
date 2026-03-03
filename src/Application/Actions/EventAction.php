@@ -22,8 +22,8 @@ class EventAction extends Action
      */
     protected function action(): Response
     {
-        $input = file_get_contents('php://input');
-        $data = json_decode($input, true);
+        $body = $this->request->getBody()->getContents();
+        $data = json_decode($body, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             return $this->respondWithData(['error' => 'Invalid JSON'], 400);

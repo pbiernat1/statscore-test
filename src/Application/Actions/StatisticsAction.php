@@ -22,12 +22,12 @@ class StatisticsAction extends Action
      */
     protected function action(): Response
     {
-        $matchId = $_GET['match_id'] ?? null;
-        $teamId = $_GET['team_id'] ?? null;
+        $params = $this->request->getQueryParams();
+        $matchId = $params['match_id'] ?? null;
+        $teamId = $params['team_id'] ?? null;
 
         try {
             if ($matchId && $teamId) {
-                // Get team statistics for specific match
                 $stats = $this->statsStorage->getTeamStatistics($matchId, $teamId);
 
                 return $this->respondWithData(new Statistics(
@@ -36,7 +36,6 @@ class StatisticsAction extends Action
                     $stats
                 ));
             } elseif ($matchId) {
-                // Get all team statistics for specific match
                 $stats = $this->statsStorage->getMatchStatistics($matchId);
 
                 return $this->respondWithData(new Statistics(

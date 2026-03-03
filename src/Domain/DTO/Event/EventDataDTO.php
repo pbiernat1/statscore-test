@@ -16,6 +16,14 @@ final readonly class EventDataDTO
         if (empty($type)) {
             throw new \InvalidArgumentException('Event type is required');
         }
+
+        if (empty($player)) {
+            throw new \InvalidArgumentException('Player name is required');
+        }
+
+        if (!isset($matchId) || !isset($teamId)) {
+            throw new \InvalidArgumentException('match_id and team_id are required for foul events');
+        }
     }
 
     public static function fromArray(array $array): EventDataDTO

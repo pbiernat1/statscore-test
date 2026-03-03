@@ -2,6 +2,7 @@
 
 namespace Tests\Api;
 
+use App\Domain\DTO\Event\EventDTO;
 use Tests\Support\ApiTester;
 
 class EventApiCest
@@ -11,13 +12,14 @@ class EventApiCest
         // Clean up storage files before each test
         $I->deleteFile('storage/events.txt');
         $I->deleteFile('storage/statistics.txt');
+        $I->sendCommandToRedis('flushdb');
     }
 
     public function testFoulEvent(ApiTester $I)
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPOST('/event', [
-            'type' => 'foul',
+            'type' => EventDTO::EVENT_TYPE_FOUL,
             'player' => 'William Saliba',
             'team_id' => 'arsenal',
             'match_id' => 'm1',
@@ -38,7 +40,7 @@ class EventApiCest
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPOST('/event', [
-            'type' => 'foul',
+            'type' => EventDTO::EVENT_TYPE_FOUL,
             'player' => 'William Saliba',
                 'minute' => 45,
             'second' => 34

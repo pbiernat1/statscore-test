@@ -7,6 +7,7 @@ use App\Domain\DTO\Event\EventDTO;
 use App\Domain\Event\EventHandler;
 use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
 use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
+use App\Infrastructure\Persistence\Statistics\StatisticsStorageInterface;
 use PHPUnit\Framework\TestCase;
 
 class JsonFileEventHandlerTest extends TestCase
@@ -47,7 +48,7 @@ class JsonFileEventHandlerTest extends TestCase
         );
 
         $this->assertEquals('success', $result->status);
-        $this->assertEquals('goal', $result->event->type);
+        $this->assertEquals(EventDTO::EVENT_TYPE_GOAL, $result->event->type);
         $this->assertObjectHasProperty('timestamp', $result->event);
     }
 
@@ -72,19 +73,14 @@ class JsonFileEventHandlerTest extends TestCase
             new JsonFileStatisticsStorage($this->testStatsFile)
         );
 
-        $eventData = [
-            'type' => 'goal',
-            'player' => 'Jane Smith'
-        ];
-
         $handler->handleEvent(
-            new EventDataDTO(EventDTO::EVENT_TYPE_GOAL, 'Jane Smith')
+            new EventDataDTO(type: EventDTO::EVENT_TYPE_GOAL, player: 'Jane Smith', teamId: 'arsenal', matchId: 'm1')
         );
 
         $this->assertFileExists($this->testFile);
         $savedEvents = $storage->getAll();
         $this->assertCount(1, $savedEvents);
-        $this->assertEquals('goal', $savedEvents[0]->type);
+        $this->assertEquals(EventDTO::EVENT_TYPE_GOAL, $savedEvents[0]->type);
     }
 
     public function testHandleFoulEventUpdatesStatistics(): void
@@ -101,12 +97,12 @@ class JsonFileEventHandlerTest extends TestCase
 
         // Check that event was saved successfully
         $this->assertEquals('success', $result->status);
-        $this->assertEquals('foul', $result->event->type);
+        $this->assertEquals(EventDTO::EVENT_TYPE_FOUL, $result->event->type);
 
         // Check that statistics were updated
         $teamStats = $statsStorage->getTeamStatistics('m1', 'arsenal');
-        $this->assertArrayHasKey('fouls', $teamStats);
-        $this->assertEquals(1, $teamStats['fouls']);
+        $this->assertArrayHasKey(StatisticsStorageInterface::TYPE_FOULS, $teamStats);
+        $this->assertEquals(1, $teamStats[StatisticsStorageInterface::TYPE_FOULS]);
     }
 
     public function testHandleMultipleFoulEventsIncrementsStatistics(): void
@@ -126,7 +122,7 @@ class JsonFileEventHandlerTest extends TestCase
 
         // Check that statistics were incremented correctly
         $teamStats = $statsStorage->getTeamStatistics('match_1', 'team_a');
-        $this->assertEquals(2, $teamStats['fouls']);
+        $this->assertEquals(2, $teamStats[StatisticsStorageInterface::TYPE_FOULS]);
     }
 
     public function testHandleFoulEventWithoutRequiredFields(): void
@@ -141,7 +137,7 @@ class JsonFileEventHandlerTest extends TestCase
         );
 
         $handler->handleEvent(
-            new EventDataDTO(EventDTO::EVENT_TYPE_FOUL, 'John Doe', minute: 45, second: 34)
+            new EventDataDTO(type: EventDTO::EVENT_TYPE_FOUL, player: 'John Doe', minute: 45, second: 34)
         );
     }
 }

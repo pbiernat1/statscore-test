@@ -5,8 +5,11 @@ use App\Application\Settings\SettingsInterface;
 use App\Domain\Event\EventHandler;
 use App\Infrastructure\Persistence\Event\EventStorageInterface;
 use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
-use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
+use App\Infrastructure\Persistence\Event\RedisEventStorage;
 use App\Infrastructure\Persistence\Statistics\StatisticsStorageInterface;
+use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
+use App\Infrastructure\Persistence\Statistics\RedisStatisticsStorage;
+use Predis\Client as RedisClient;
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -36,7 +39,14 @@ return function (ContainerBuilder $containerBuilder) {
                 ->get('eventStorage')
             ;
 
-            return new JsonFileEventStorage($conf['jsonFilePath']);
+            // return new JsonFileEventStorage($conf['jsonFilePath']);
+            $redisClient = new RedisClient([
+                'scheme' => 'tcp',
+                'host' => $conf['redisHost'],
+                'port' => $conf['redisPort']
+            ]);
+
+            return new RedisEventStorage($redisClient);
         },
         StatisticsStorageInterface::class => function (ContainerInterface $c) {
             $conf = $c
@@ -44,7 +54,14 @@ return function (ContainerBuilder $containerBuilder) {
                 ->get('statisticsStorage')
             ;
 
-            return new JsonFileStatisticsStorage($conf['jsonFilePath']);
+            // return new JsonFileStatisticsStorage($conf['jsonFilePath']);
+            $redisClient = new RedisClient([
+                'scheme' => 'tcp',
+                'host' => $conf['redisHost'],
+                'port' => $conf['redisPort']
+            ]);
+
+            return new RedisStatisticsStorage($redisClient);
         },
         EventHandler::class => function (ContainerInterface $c) {
             return new EventHandler(

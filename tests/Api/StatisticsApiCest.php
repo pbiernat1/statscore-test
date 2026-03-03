@@ -2,6 +2,7 @@
 
 namespace Tests\Api;
 
+use App\Infrastructure\Persistence\Statistics\StatisticsStorageInterface;
 use Tests\Support\ApiTester;
 
 class StatisticsApiCest
@@ -11,6 +12,7 @@ class StatisticsApiCest
         // Clean up storage files before each test
         $I->deleteFile('storage/events.txt');
         $I->deleteFile('storage/statistics.txt');
+        $I->sendCommandToRedis('flushdb');
     }
 
     public function testGetTeamStatistics(ApiTester $I)
@@ -45,7 +47,7 @@ class StatisticsApiCest
             'match_id' => 'm1',
             'team_id' => 'arsenal',
             'statistics' => [
-                'fouls' => 2
+                StatisticsStorageInterface::TYPE_FOULS => 2
             ]
         ]);
     }
@@ -82,10 +84,10 @@ class StatisticsApiCest
             'match_id' => 'm1',
             'statistics' => [
                 'arsenal' => [
-                    'fouls' => 1
+                    StatisticsStorageInterface::TYPE_FOULS => 1
                 ],
                 'liverpool' => [
-                    'fouls' => 1
+                    StatisticsStorageInterface::TYPE_FOULS => 1
                 ]
             ]
         ]);

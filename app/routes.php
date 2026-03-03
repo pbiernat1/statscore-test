@@ -8,4 +8,6 @@ use App\Application\Actions\StatisticsAction;
 return function (App $app) {
     $app->post('/event', EventAction::class);
     $app->get('/statistics', StatisticsAction::class);
+    // $app->get('/events', EventsAction::class);
+    // $app->get('/stream', EventsSSEAction::class);
 };

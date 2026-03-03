@@ -22,18 +22,16 @@ class EventHandler
         $eventDTO = new EventDTO($data->type, time(), $data);
         $this->eventStorage->save($eventDTO);
 
-        // Update statistics for foul events
-        if ($data->type === EventDTO::EVENT_TYPE_FOUL) {
-            if (!isset($data->matchId) || !isset($data->teamId)) {
-                throw new \InvalidArgumentException('match_id and team_id are required for foul events');
-            }
+        $eventType = match ($data->type) {
+            EventDTO::EVENT_TYPE_GOAL => StatisticsStorageInterface::TYPE_GOALS,
+            EventDTO::EVENT_TYPE_FOUL => StatisticsStorageInterface::TYPE_FOULS,
+        };
 
-            $this->statsStorage->updateTeamStatistics(
-                $data->matchId,
-                $data->teamId,
-                'fouls'
-            );
-        }
+        $this->statsStorage->updateTeamStatistics(
+            $data->matchId,
+            $data->teamId,
+            $eventType
+        );
 
         return new Event('success', 'Event saved successfully', $eventDTO);
     }

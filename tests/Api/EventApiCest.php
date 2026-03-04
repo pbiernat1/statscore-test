@@ -20,6 +20,7 @@ class EventApiCest
         $I->sendPOST('/event', [
             'type' => 'foul',
             'player' => 'William Saliba',
+            'affected_player' => 'John Doe',
             'team_id' => 'arsenal',
             'match_id' => 'm1',
             'minute' => 45,
@@ -41,6 +42,7 @@ class EventApiCest
         $I->sendPOST('/event', [
             'type' => 'foul',
             'player' => 'William Saliba',
+            'affected_player' => 'John Doe',
             'match_id' => 'm1',
             'minute' => 45,
             'second' => 34
@@ -60,6 +62,7 @@ class EventApiCest
         $I->sendPOST('/event', [
             'type' => 'foul',
             'player' => 'William Saliba',
+            'affected_player' => 'John Doe',
             'team_id' => 'arsenal',
             'minute' => 45,
             'second' => 34
@@ -78,6 +81,7 @@ class EventApiCest
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPOST('/event', [
             'type' => 'foul',
+            'affected_player' => 'John Doe',
             'team_id' => 'arsenal',
             'match_id' => 'm1',
             'minute' => 45,

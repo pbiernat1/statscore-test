@@ -41,6 +41,7 @@ class JsonFileEventHandlerTest extends TestCase
 
         $event = new GoalEvent(
             player: 'John Doe',
+            assistingPlayer: 'Jane Smith',
             teamId: 23,
             matchId: 34,
             minute: 1,
@@ -61,7 +62,7 @@ class JsonFileEventHandlerTest extends TestCase
             new JsonFileStatisticsStorage($this->testStatsFile)
         );
 
-        $event = new GoalEvent('Jane Smith', 'arsenal', 'm1', 1, 1);
+        $event = new GoalEvent('Jane Smith', 'John Doe', 'arsenal', 'm1', 1, 1);
         $handler->handleEvent($event);
 
         $this->assertFileExists($this->testFile);
@@ -78,8 +79,8 @@ class JsonFileEventHandlerTest extends TestCase
             $statsStorage
         );
 
-        $event1 = new FoulEvent('William Saliba', 'arsenal', 'm1', 45, 34);
-        $event2 = new GoalEvent('William Saliba', 'arsenal', 'm1', 55, 34);
+        $event1 = new FoulEvent('William Saliba', 'Jane Smith', 'arsenal', 'm1', 45, 34);
+        $event2 = new GoalEvent('William Saliba', 'John Doe', 'arsenal', 'm1', 55, 34);
         $result1 = $handler->handleEvent($event1);
         $result2 = $handler->handleEvent($event2);
 
@@ -104,8 +105,8 @@ class JsonFileEventHandlerTest extends TestCase
             $statsStorage
         );
 
-        $event1 = new FoulEvent('John Doe', 'team_a', 'match_1', 15, 34);
-        $event2 = new FoulEvent('Jane Smith', 'team_a', 'match_1', 30, 34);
+        $event1 = new FoulEvent('John Doe', 'Jane Smith', 'team_a', 'match_1', 15, 34);
+        $event2 = new FoulEvent('Jane Smith', 'John Doe', 'team_a', 'match_1', 30, 34);
 
         $handler->handleEvent($event1);
         $handler->handleEvent($event2);
@@ -123,8 +124,8 @@ class JsonFileEventHandlerTest extends TestCase
             $statsStorage
         );
 
-        $event1 = new GoalEvent('John Doe', 'team_a', 'match_1', 15, 34);
-        $event2 = new GoalEvent('Jane Smith', 'team_a', 'match_1', 30, 34);
+        $event1 = new GoalEvent('John Doe', 'Jane Smith', 'team_a', 'match_1', 15, 34);
+        $event2 = new GoalEvent('Jane Smith', 'John Doe', 'team_a', 'match_1', 30, 34);
 
         $handler->handleEvent($event1);
         $handler->handleEvent($event2);

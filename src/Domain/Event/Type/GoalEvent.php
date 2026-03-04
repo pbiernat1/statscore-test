@@ -7,6 +7,7 @@ class GoalEvent extends Event
 {
     public function __construct(
         protected string $player,
+        protected string $assistingPlayer,
         protected string $teamId,
         protected string $matchId,
         protected int $minute,
@@ -18,7 +19,8 @@ class GoalEvent extends Event
     {
         return [
             'type' => 'goal',
-            'player' => $this->player, 
+            'player' => $this->player,
+            'assisting_player' => $this->assistingPlayer,
             'team_id' => $this->teamId,
             'match_id' => $this->matchId,
             'minute' => $this->minute,

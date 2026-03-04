@@ -22,6 +22,7 @@ class StatisticsApiCest
         $I->sendPOST('/event', [
             'type' => 'foul',
             'player' => 'William Saliba',
+            'affected_player' => 'Jane Doe',
             'team_id' => 'arsenal',
             'match_id' => 'm1',
             'minute' => 15,
@@ -32,6 +33,7 @@ class StatisticsApiCest
         $I->sendPOST('/event', [
             'type' => 'foul',
             'player' => 'Gabriel Jesus',
+            'affected_player' => 'John Gregory',
             'team_id' => 'arsenal',
             'match_id' => 'm1',
             'minute' => 30,
@@ -43,6 +45,7 @@ class StatisticsApiCest
 
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
+        // var_dump($I->grabResponse());exit;
         $I->seeResponseContainsJson([
             'match_id' => 'm1',
             'team_id' => 'arsenal',
@@ -59,6 +62,7 @@ class StatisticsApiCest
         $I->sendPOST('/event', [
             'type' => 'foul',
             'player' => 'William Saliba',
+            'affected_player' => 'John Doe',
             'team_id' => 'arsenal',
             'match_id' => 'm1',
             'minute' => 15,
@@ -69,6 +73,7 @@ class StatisticsApiCest
         $I->sendPOST('/event', [
             'type' => 'foul',
             'player' => 'Virgil van Dijk',
+            'affected_player' => 'John Doe',
             'team_id' => 'liverpool',
             'match_id' => 'm1',
             'minute' => 30,

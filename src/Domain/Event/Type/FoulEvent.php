@@ -7,6 +7,7 @@ class FoulEvent extends Event
 {
     public function __construct(
         protected string $player,
+        protected string $affectedPlayer,
         protected string $teamId,
         protected string $matchId,
         protected int $minute,
@@ -19,6 +20,7 @@ class FoulEvent extends Event
         return [
             'type' => 'foul',
             'player' => $this->player,
+            'affected_player' => $this->affectedPlayer,
             'team_id' => $this->teamId,
             'match_id' => $this->matchId,
             'minute' => $this->minute,

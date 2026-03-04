@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Event;
 
-use App\Domain\DTO\Event\EventDTO;
+use App\Domain\Event\Type\Event;
 
 interface EventStorageInterface
 {
-    public function save(EventDTO $event): void;
+    public function save(Event $event): void;
 
     public function getAll(): array;
 }

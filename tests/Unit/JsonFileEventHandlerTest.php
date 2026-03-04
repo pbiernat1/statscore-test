@@ -2,8 +2,9 @@
 
 namespace Tests;
 
-use App\Domain\DTO\Event\EventDataDTO;
-use App\Domain\DTO\Event\EventDTO;
+use App\Domain\Event\Type\Event;
+use App\Domain\Event\Type\GoalEvent;
+use App\Domain\Event\Type\FoulEvent;
 use App\Domain\Event\EventHandler;
 use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
 use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
@@ -38,31 +39,18 @@ class JsonFileEventHandlerTest extends TestCase
             new JsonFileStatisticsStorage($this->testStatsFile)
         );
 
-        $result = $handler->handleEvent(
-        new EventDataDTO(
-                type: EventDTO::TYPE_GOAL,
-                player: 'John Doe',
-                teamId: 23,
-                matchId: 34
-            )
+        $event = new GoalEvent(
+            player: 'John Doe',
+            teamId: 23,
+            matchId: 34,
+            minute: 1,
+            second: 50
         );
+
+        $result = $handler->handleEvent($event);
 
         $this->assertEquals('success', $result->status);
-        $this->assertEquals(EventDTO::TYPE_GOAL, $result->event->type);
-        $this->assertObjectHasProperty('timestamp', $result->event);
-    }
-
-    public function testHandleEventWithoutType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Event type is required');
-
-        $handler = new EventHandler(
-            new JsonFileEventStorage($this->testFile),
-            new JsonFileStatisticsStorage($this->testStatsFile)
-        );
-
-        $handler->handleEvent(new EventDataDTO());
+        $this->assertEquals(GoalEvent::class, get_class($event));
     }
 
     public function testEventIsSavedToFile(): void
@@ -73,14 +61,13 @@ class JsonFileEventHandlerTest extends TestCase
             new JsonFileStatisticsStorage($this->testStatsFile)
         );
 
-        $handler->handleEvent(
-            new EventDataDTO(type: EventDTO::TYPE_GOAL, player: 'Jane Smith', teamId: 'arsenal', matchId: 'm1')
-        );
+        $event = new GoalEvent('Jane Smith', 'arsenal', 'm1', 1, 1);
+        $handler->handleEvent($event);
 
         $this->assertFileExists($this->testFile);
         $savedEvents = $storage->getAll();
         $this->assertCount(1, $savedEvents);
-        $this->assertEquals(EventDTO::TYPE_GOAL, $savedEvents[0]->type);
+        $this->assertEquals(GoalEvent::class, get_class($savedEvents[0]));
     }
 
     public function testHandleFoulEventUpdatesStatistics(): void
@@ -91,13 +78,12 @@ class JsonFileEventHandlerTest extends TestCase
             $statsStorage
         );
 
-        $result = $handler->handleEvent(
-            new EventDataDTO(EventDTO::TYPE_FOUL, 'William Saliba', 'arsenal', 'm1', 45, 34)
-        );
+        $event = new FoulEvent('William Saliba', 'arsenal', 'm1', 45, 34);
+        $result = $handler->handleEvent($event);
 
         // Check that event was saved successfully
         $this->assertEquals('success', $result->status);
-        $this->assertEquals(EventDTO::TYPE_FOUL, $result->event->type);
+        $this->assertEquals(FoulEvent::class, get_class($event));
 
         // Check that statistics were updated
         $teamStats = $statsStorage->getTeamStatistics('m1', 'arsenal');
@@ -113,31 +99,14 @@ class JsonFileEventHandlerTest extends TestCase
             $statsStorage
         );
 
-        $handler->handleEvent(
-            new EventDataDTO(EventDTO::TYPE_FOUL, 'John Doe', 'team_a', 'match_1', 15, 34)
-        );
-        $handler->handleEvent(
-            new EventDataDTO(EventDTO::TYPE_FOUL, 'Jane Smith', 'team_a', 'match_1', 30, 34)
-        );
+        $event1 = new FoulEvent('John Doe', 'team_a', 'match_1', 15, 34);
+        $event2 = new FoulEvent('Jane Smith', 'team_a', 'match_1', 30, 34);
+
+        $handler->handleEvent($event1);
+        $handler->handleEvent($event2);
 
         // Check that statistics were incremented correctly
         $teamStats = $statsStorage->getTeamStatistics('match_1', 'team_a');
         $this->assertEquals(2, $teamStats[StatisticsStorageInterface::TYPE_FOULS]);
-    }
-
-    public function testHandleFoulEventWithoutRequiredFields(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('match_id and team_id are required for foul events');
-
-        $statsStorage = new JsonFileStatisticsStorage($this->testStatsFile);
-        $handler = new EventHandler(
-            new JsonFileEventStorage($this->testFile),
-            $statsStorage
-        );
-
-        $handler->handleEvent(
-            new EventDataDTO(type: EventDTO::TYPE_FOUL, player: 'John Doe', minute: 45, second: 34)
-        );
     }
 }

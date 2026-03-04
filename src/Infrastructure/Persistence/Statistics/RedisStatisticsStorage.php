@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\Persistence\Statistics;
 
-use App\Domain\DTO\Event\EventDTO;
 use Predis\Client as RedisClient;
 
 class RedisStatisticsStorage implements StatisticsStorageInterface

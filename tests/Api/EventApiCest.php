@@ -2,7 +2,6 @@
 
 namespace Tests\Api;
 
-use App\Domain\DTO\Event\EventDTO;
 use Tests\Support\ApiTester;
 
 class EventApiCest
@@ -19,7 +18,7 @@ class EventApiCest
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPOST('/event', [
-            'type' => EventDTO::TYPE_FOUL,
+            'type' => 'foul',
             'player' => 'William Saliba',
             'team_id' => 'arsenal',
             'match_id' => 'm1',
@@ -33,16 +32,16 @@ class EventApiCest
             'status' => 'success',
             'message' => 'Event saved successfully'
         ]);
-        $I->seeResponseJsonMatchesJsonPath('$.data.event.type', 'foul');
+        $I->seeResponseJsonMatchesJsonPath('$.data.data.type', 'foul');
     }
 
     public function testFoulEventWithoutRequiredFields(ApiTester $I)
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPOST('/event', [
-            'type' => EventDTO::TYPE_FOUL,
+            'type' => 'foul',
             'player' => 'William Saliba',
-                'minute' => 45,
+            'minute' => 45,
             'second' => 34
             // Missing team_id and match_id
         ]);
@@ -50,7 +49,7 @@ class EventApiCest
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            'error' => 'match_id and team_id are required for foul events'
+            'error' => 'Missing required key: team_id'
         ]);
     }
 
@@ -78,7 +77,7 @@ class EventApiCest
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            'error' => 'Event type is required'
+            'error' => 'Missing required key: type'
         ]);
     }
 }

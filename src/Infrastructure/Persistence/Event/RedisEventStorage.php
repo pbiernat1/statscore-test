@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Event;
 
+use App\Domain\Event\Type\Event;
+use App\Domain\Event\EventFactory;
 use Predis\Client as RedisClient;
-use App\Domain\DTO\Event\EventDTO;
 
 class RedisEventStorage implements EventStorageInterface
 {
@@ -16,16 +17,16 @@ class RedisEventStorage implements EventStorageInterface
     {
     }
 
-    public function save(EventDTO $eventDTO): void
+    public function save(Event $event): void
     {
-        $json = json_encode($eventDTO);
+        $json = json_encode($event->toArray());
 
-        $this->redis->rpush(sprintf(self::PATTERN_MATCH, $eventDTO->data->matchId), [$json]);
+        $this->redis->rpush(sprintf(self::PATTERN_MATCH, $event->getMatchId()), [$json]);
         $this->redis->rpush(self::PATTERN_GLOBAL, [$json]);
     }
 
     /**
-     * @return array[EventDTO]
+     * @return array[Event]
      */
     public function getAll(): array
     {
@@ -34,7 +35,7 @@ class RedisEventStorage implements EventStorageInterface
         return array_map(function (string $item) {
             $data = json_decode($item, true);
 
-            return EventDTO::fromArray($data);
+            return EventFactory::fromArray($data);
         }, $items);
     }
 }

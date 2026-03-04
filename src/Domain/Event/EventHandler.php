@@ -3,11 +3,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Event;
 
+use App\Domain\Event\Type\FoulEvent;
+use App\Domain\Event\Type\GoalEvent;
 use App\Infrastructure\Persistence\Event\EventStorageInterface;
 use App\Infrastructure\Persistence\Statistics\StatisticsStorageInterface;
-use App\Domain\DTO\Event\EventDTO;
-use App\Domain\DTO\Event\EventDataDTO;
 use App\Domain\Response\Event;
+use App\Domain\Event\Type\Event as EventType;
 
 class EventHandler
 {
@@ -17,22 +18,21 @@ class EventHandler
     ) {
     }
 
-    public function handleEvent(EventDataDTO $data): Event
+    public function handleEvent(EventType $event): Event
     {
-        $eventDTO = new EventDTO($data->type, time(), $data);
-        $this->eventStorage->save($eventDTO);
+        $this->eventStorage->save($event);
 
-        $eventType = match ($data->type) {
-            EventDTO::TYPE_GOAL => StatisticsStorageInterface::TYPE_GOALS,
-            EventDTO::TYPE_FOUL => StatisticsStorageInterface::TYPE_FOULS,
+        $eventType = match (get_class($event)) {
+            GoalEvent::class => StatisticsStorageInterface::TYPE_GOALS,
+            FoulEvent::class => StatisticsStorageInterface::TYPE_FOULS,
         };
 
         $this->statsStorage->updateTeamStatistics(
-            $data->matchId,
-            $data->teamId,
+            $event->getMatchId(),
+            $event->getTeamId(),
             $eventType
         );
 
-        return new Event('success', 'Event saved successfully', $eventDTO);
+        return new Event('success', 'Event saved successfully', $event->toArray());
     }
 }

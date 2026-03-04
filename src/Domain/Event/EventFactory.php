@@ -9,6 +9,10 @@ class EventFactory
     {
         $eventClassName = sprintf('App\Domain\Event\Type\%sEvent', ucfirst($data['type']));
 
+        if (!class_exists($eventClassName)) {
+            throw new \InvalidArgumentException('Unknown EventType class: '. $eventClassName);
+        }
+
         return new $eventClassName(
             $data['player'],
             $data['team_id'],

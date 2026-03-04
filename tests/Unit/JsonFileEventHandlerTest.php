@@ -78,17 +78,22 @@ class JsonFileEventHandlerTest extends TestCase
             $statsStorage
         );
 
-        $event = new FoulEvent('William Saliba', 'arsenal', 'm1', 45, 34);
-        $result = $handler->handleEvent($event);
+        $event1 = new FoulEvent('William Saliba', 'arsenal', 'm1', 45, 34);
+        $event2 = new GoalEvent('William Saliba', 'arsenal', 'm1', 55, 34);
+        $result1 = $handler->handleEvent($event1);
+        $result2 = $handler->handleEvent($event2);
 
         // Check that event was saved successfully
-        $this->assertEquals('success', $result->status);
-        $this->assertEquals(FoulEvent::class, get_class($event));
+        $this->assertEquals('success', $result1->status);
+        $this->assertEquals('success', $result2->status);
+        $this->assertEquals(FoulEvent::class, get_class($event1));
+        $this->assertEquals(GoalEvent::class, get_class($event2));
 
         // Check that statistics were updated
         $teamStats = $statsStorage->getTeamStatistics('m1', 'arsenal');
         $this->assertArrayHasKey(StatisticsStorageInterface::TYPE_FOULS, $teamStats);
         $this->assertEquals(1, $teamStats[StatisticsStorageInterface::TYPE_FOULS]);
+        $this->assertEquals(1, $teamStats[StatisticsStorageInterface::TYPE_GOALS]);
     }
 
     public function testHandleMultipleFoulEventsIncrementsStatistics(): void
@@ -108,5 +113,24 @@ class JsonFileEventHandlerTest extends TestCase
         // Check that statistics were incremented correctly
         $teamStats = $statsStorage->getTeamStatistics('match_1', 'team_a');
         $this->assertEquals(2, $teamStats[StatisticsStorageInterface::TYPE_FOULS]);
+    }
+
+    public function testHandleMultipleGoalEventsIncrementsStatistics(): void
+    {
+        $statsStorage = new JsonFileStatisticsStorage($this->testStatsFile);
+        $handler = new EventHandler(
+            new JsonFileEventStorage($this->testFile),
+            $statsStorage
+        );
+
+        $event1 = new GoalEvent('John Doe', 'team_a', 'match_1', 15, 34);
+        $event2 = new GoalEvent('Jane Smith', 'team_a', 'match_1', 30, 34);
+
+        $handler->handleEvent($event1);
+        $handler->handleEvent($event2);
+
+        // Check that statistics were incremented correctly
+        $teamStats = $statsStorage->getTeamStatistics('match_1', 'team_a');
+        $this->assertEquals(2, $teamStats[StatisticsStorageInterface::TYPE_GOALS]);
     }
 }

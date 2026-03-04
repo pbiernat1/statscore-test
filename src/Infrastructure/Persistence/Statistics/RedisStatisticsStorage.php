@@ -16,14 +16,7 @@ class RedisStatisticsStorage implements StatisticsStorageInterface
     {
         $key = $this->buildKey($matchId, $teamId);
 
-        switch ($eventType) {
-            case static::TYPE_GOALS:
-                $this->redis->hincrby($key,  self::TYPE_GOALS, 1);
-            break;
-            case static::TYPE_FOULS:
-                $this->redis->hincrby($key,  self::TYPE_FOULS, 1);
-            break;
-        }
+        $this->redis->hincrby($key,  $eventType, 1);
     }
 
     public function getMatchStatistics(string $matchId): array

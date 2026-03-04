@@ -19,6 +19,18 @@ use Psr\Log\LoggerInterface;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
+        'RedisClient' => function (ContainerInterface $c) {
+            $conf = $c
+                ->get(SettingsInterface::class)
+                ->get('redisStorage')
+            ;
+
+            return new RedisClient([
+                'scheme' => 'tcp',
+                'host' => $conf['redisHost'],
+                'port' => $conf['redisPort']
+            ]);
+        },
         LoggerInterface::class => function (ContainerInterface $c) {
             $settings = $c->get(SettingsInterface::class);
 
@@ -40,13 +52,7 @@ return function (ContainerBuilder $containerBuilder) {
             ;
 
             // return new JsonFileEventStorage($conf['jsonFilePath']);
-            $redisClient = new RedisClient([
-                'scheme' => 'tcp',
-                'host' => $conf['redisHost'],
-                'port' => $conf['redisPort']
-            ]);
-
-            return new RedisEventStorage($redisClient);
+            return new RedisEventStorage($c->get('RedisClient'));
         },
         StatisticsStorageInterface::class => function (ContainerInterface $c) {
             $conf = $c
@@ -55,13 +61,7 @@ return function (ContainerBuilder $containerBuilder) {
             ;
 
             // return new JsonFileStatisticsStorage($conf['jsonFilePath']);
-            $redisClient = new RedisClient([
-                'scheme' => 'tcp',
-                'host' => $conf['redisHost'],
-                'port' => $conf['redisPort']
-            ]);
-
-            return new RedisStatisticsStorage($redisClient);
+            return new RedisStatisticsStorage($c->get('RedisClient'));
         },
         EventHandler::class => function (ContainerInterface $c) {
             return new EventHandler(

@@ -7,13 +7,10 @@ use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
 
 class JsonFileStatisticsStorage implements StatisticsStorageInterface
 {
-    private EventStorageInterface $storage;
-
     private string $statsFile;
 
     public function __construct(string $statsFile = __DIR__ . '/../storage/statistics.txt')
     {
-        $this->storage = new JsonFileEventStorage($statsFile);
         $this->statsFile = $statsFile;
 
         $directory = dirname($statsFile);

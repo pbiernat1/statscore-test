@@ -3,17 +3,42 @@ declare(strict_types=1);
 
 namespace App\Domain\Event\Type;
 
-interface Event
+abstract class Event
 {
-    public function getPlayer(): string;
+    protected string $player = '';
 
-    public function getTeamId(): string;
+    protected string $teamId = '';
 
-    public function getMatchId(): string;
+    protected string $matchId = '';
 
-    public function getMinute(): int;
+    protected int $minute = 0;
 
-    public function getSecond(): int;
+    protected int $second = 0;
 
-    public function toArray(): array;
+    public function getPlayer(): string
+    {
+        return $this->player;
+    }
+
+    public function getTeamId(): string
+    {
+        return $this->teamId;
+    }
+
+    public function getMatchId(): string
+    {
+        return $this->matchId;
+    }
+
+    public function getMinute(): int
+    {
+        return $this->minute;
+    }
+
+    public function getSecond(): int
+    {
+        return $this->second;
+    }
+
+    abstract public function toArray(): array;
 }

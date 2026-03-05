@@ -3,7 +3,7 @@ services:
     image: caddy:2-alpine
     container_name: football_events_caddy
     ports:
-      - "8888:8000"
+      - "8000:8000"
     volumes:
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - ./public:/app/public:ro

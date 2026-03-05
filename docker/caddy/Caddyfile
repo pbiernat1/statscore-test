@@ -1,11 +1,11 @@
 :8000 {
 	handle /stream {
-        root * /app/public
+		root * /app/public
 
 		php_fastcgi app:9001 {
 			index index.php
+			root /app/public
 
-			# Wyłącz buforowanie odpowiedzi — wymagane przez SSE
 			flush_interval -1
 
 			# Długie połączenie (>= request_terminate_timeout w sse.conf)
@@ -16,10 +16,11 @@
 	}
 
 	handle {
-        root * /app/public
+		root * /app/public
 
 		php_fastcgi app:9000 {
 			index index.php
+			root /app/public
 
 			dial_timeout  5s
 			read_timeout  30s

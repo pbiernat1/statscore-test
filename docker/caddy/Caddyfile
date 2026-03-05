@@ -1,0 +1,46 @@
+:8000 {
+	handle /stream {
+		root * /app/public
+
+		php_fastcgi app:9001 {
+			index index.php
+			root /app/public
+
+			flush_interval -1
+
+			# Długie połączenie (>= request_terminate_timeout w sse.conf)
+			dial_timeout  5s
+			read_timeout  3600s
+			write_timeout 3600s
+		}
+	}
+
+	handle {
+		root * /app/public
+
+		php_fastcgi app:9000 {
+			index index.php
+			root /app/public
+
+			dial_timeout  5s
+			read_timeout  30s
+			write_timeout 30s
+		}
+	}
+
+	log {
+		output stderr
+		format console
+		level  INFO
+	}
+
+	header {
+		X-Frame-Options        "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		X-XSS-Protection       "1; mode=block"
+		-Server
+	}
+
+	@hidden path_regexp hidden (^\.|/\.)
+	respond @hidden 403
+}

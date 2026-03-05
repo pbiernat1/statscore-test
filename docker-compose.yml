@@ -1,9 +1,20 @@
 services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: football_events_caddy
+    ports:
+      - "8888:8000"
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./public:/app/public:ro
+    depends_on:
+      - app
+    networks:
+      - football_network
+
   app:
     build: .
     container_name: football_events_app
-    ports:
-      - "8888:8000" # FIXME change host port to 8000
     volumes:
       - .:/app
     working_dir: /app

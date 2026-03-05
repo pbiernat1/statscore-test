@@ -5,10 +5,12 @@ use App\Application\Settings\SettingsInterface;
 use App\Domain\Event\EventHandler;
 use App\Infrastructure\Persistence\Event\EventStorageInterface;
 use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
+use App\Infrastructure\Persistence\Event\RedisEventPublisher;
 use App\Infrastructure\Persistence\Event\RedisEventStorage;
 use App\Infrastructure\Persistence\Statistics\StatisticsStorageInterface;
 use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
 use App\Infrastructure\Persistence\Statistics\RedisStatisticsStorage;
+use App\Application\Actions\EventSSEAction;
 use Predis\Client as RedisClient;
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
@@ -29,6 +31,19 @@ return function (ContainerBuilder $containerBuilder) {
                 'scheme' => 'tcp',
                 'host' => $conf['redisHost'],
                 'port' => $conf['redisPort']
+            ]);
+        },
+        'RedisSubscriber' => function (ContainerInterface $c) {
+            $conf = $c
+                ->get(SettingsInterface::class)
+                ->get('redisStorage')
+            ;
+
+            return new RedisClient([
+                'scheme' => 'tcp',
+                'host'   => $conf['redisHost'],
+                'port'   => $conf['redisPort'],
+                'read_write_timeout' => 0,  // Required for SSE
             ]);
         },
         LoggerInterface::class => function (ContainerInterface $c) {
@@ -67,6 +82,12 @@ return function (ContainerBuilder $containerBuilder) {
             return new EventHandler(
                 $c->get(EventStorageInterface::class),
                 $c->get(StatisticsStorageInterface::class)
+            );
+        },
+        RedisEventPublisher::class => function (ContainerInterface $c) {
+            return new RedisEventPublisher(
+                $c->get('RedisClient'),
+                $c->get('RedisSubscriber')
             );
         },
     ]);

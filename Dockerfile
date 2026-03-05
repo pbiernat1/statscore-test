@@ -1,28 +1,24 @@
-FROM php:8.4-cli
+FROM php:8.4-fpm-alpine3.23
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apk update && apk add \
     git \
     unzip \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/cache/apk/*
 
-# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
 WORKDIR /app
 
-# Copy application files
 COPY . /app
 
-# Install PHP dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Create storage directory
-RUN mkdir -p storage && chmod 777 storage
+RUN mkdir -p storage \
+    && chmod -R 777 storage public
 
-# Expose port
+COPY docker/php-fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY docker/php-fpm/sse.conf /usr/local/etc/php-fpm.d/sse.conf
+
 EXPOSE 8000
 
-# Start PHP built-in server
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+CMD ["php-fpm"]

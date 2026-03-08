@@ -42,8 +42,8 @@ class JsonFileEventHandlerTest extends TestCase
         $event = new GoalEvent(
             player: 'John Doe',
             assistingPlayer: 'Jane Smith',
-            teamId: 23,
-            matchId: 34,
+            teamId: '23',
+            matchId: '34',
             minute: 1,
             second: 50
         );

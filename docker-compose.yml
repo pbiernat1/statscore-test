@@ -6,7 +6,8 @@ services:
       - "8000:8000"
     volumes:
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./public:/app/public:ro
+      - .:/var/www/html:ro
+    working_dir: /var/www/html
     depends_on:
       - app
     networks:
@@ -16,8 +17,8 @@ services:
     build: .
     container_name: football_events_app
     volumes:
-      - .:/app
-    working_dir: /app
+      - .:/var/www/html
+    working_dir: /var/www/html
     depends_on:
       redis:
         condition: service_healthy

@@ -1,31 +1,34 @@
 :8000 {
+	root * /app/public
+
+	@notFile {
+		not file
+	}
+	rewrite @notFile /index.php
+
 	handle /stream {
-		root * /app/public
+        root * /app/public
+		reverse_proxy app:9001 {
+            transport fastcgi {
+                env SCRIPT_NAME /index.php
+				env SCRIPT_FILENAME /app/public/index.php
+                env REQUEST_URI     {uri}
+                split .php
+            }
 
-		php_fastcgi app:9001 {
-			index index.php
-			root /app/public
-
-			flush_interval -1
-
-			# Długie połączenie (>= request_terminate_timeout w sse.conf)
-			dial_timeout  5s
-			read_timeout  3600s
-			write_timeout 3600s
-		}
+            flush_interval -1
+        }
 	}
 
 	handle {
-		root * /app/public
+        root * /app/public
 
 		php_fastcgi app:9000 {
-			index index.php
 			root /app/public
-
-			dial_timeout  5s
-			read_timeout  30s
-			write_timeout 30s
+			index index.php
+			try_files {path} {path}/ /index.php?{query}
 		}
+		file_server
 	}
 
 	log {

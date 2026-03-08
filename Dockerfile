@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine3.23
+FROM php:8.4-fpm-alpine3.22
 
 RUN apk update && apk add \
     git \

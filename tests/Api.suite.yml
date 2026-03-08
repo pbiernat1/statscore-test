@@ -2,7 +2,7 @@ actor: ApiTester
 modules:
     enabled:
         - REST:
-            url: http://localhost:8000
+            url: http://caddy:8000
             depends: PhpBrowser
         - Redis:
             host: redis
@@ -12,4 +12,4 @@ modules:
         - Tests\Support\Helper\FileHelper
     config:
         PhpBrowser:
-            url: http://localhost:8000
+            url: http://caddy:8000

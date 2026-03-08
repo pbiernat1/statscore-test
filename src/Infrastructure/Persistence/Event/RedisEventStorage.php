@@ -33,7 +33,7 @@ class RedisEventStorage implements EventStorageInterface
     }
 
     /**
-     * @return array[Event]
+     * @return Event[]
      */
     public function getAll(): array
     {

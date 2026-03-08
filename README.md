@@ -38,12 +38,12 @@ The following business requirements must be met by the solution:
 
 1. Build and run the container:
 ```bash
-docker compose up --build -d
+make up
 ```
 
 2. Build and run the container:
 ```bash
-docker exec -it football_events_app composer install
+make composer-install
 ```
 
 3. The application will be available at: `http://localhost:8000`
@@ -74,6 +74,7 @@ Both events return a similar response structure:
     "data": {
       "type": "foul",
       "player": "William Saliba",
+      "affected_player": "Cristopher Balisaba",
       "team_id": "arsenal",
       "match_id": "m1",
       "minute": 45,
@@ -117,12 +118,12 @@ Foul events automatically update team statistics (fouls counter) for the specifi
 Run PHPUnit tests inside the container:
 
 ```bash
-docker exec -it football_events_app vendor/bin/phpunit tests
+make test-unit
 ```
 
 Or after entering the container:
 ```bash
-docker exec -it football_events_app bash
+make shell
 vendor/bin/phpunit tests
 ```
 
@@ -131,13 +132,13 @@ vendor/bin/phpunit tests
 Run Codeception API tests for comprehensive endpoint testing:
 
 ```bash
-docker exec -it football_events_app vendor/bin/codecept run Api
+make test-api
 ```
 
 Run all Codeception tests:
 
 ```bash
-docker exec -it football_events_app vendor/bin/codecept run
+make test-all
 ```
 
 ### Test Coverage

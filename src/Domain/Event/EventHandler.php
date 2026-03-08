@@ -25,6 +25,7 @@ class EventHandler
         $eventType = match (get_class($event)) {
             GoalEvent::class => StatisticsStorageInterface::TYPE_GOALS,
             FoulEvent::class => StatisticsStorageInterface::TYPE_FOULS,
+            default => null,
         };
 
         $this->statsStorage->updateTeamStatistics(

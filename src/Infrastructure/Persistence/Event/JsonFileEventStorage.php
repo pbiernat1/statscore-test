@@ -24,7 +24,7 @@ class JsonFileEventStorage implements EventStorageInterface
     }
 
     /**
-     * @return array[Event]
+     * @return Event[]
      */
     public function getAll(): array
     {
@@ -35,7 +35,7 @@ class JsonFileEventStorage implements EventStorageInterface
         $content = file_get_contents($this->filePath);
         $items = explode(PHP_EOL, trim($content));
 
-        return array_map(function($item) {
+        return array_map(function($item): Event {
             $data = json_decode($item, true);
 
             return EventFactory::fromArray($data);

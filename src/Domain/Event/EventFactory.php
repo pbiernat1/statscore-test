@@ -20,8 +20,6 @@ class EventFactory
         }
 
         $eventClassName = static::createEventTypeClassName($data['type']);
-        $validator = static::createValidator($data['type'] ?? 'none');
-        $validator->validate($data);
 
         switch ($eventClassName) {
             case GoalEvent::class:

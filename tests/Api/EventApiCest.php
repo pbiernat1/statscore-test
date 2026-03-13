@@ -141,9 +141,8 @@ class EventApiCest
 
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
-        // var_dump($I->grabResponse());exit;
         $I->seeResponseContainsJson([
-            'error' => 'Unknown EventType class: App\\Domain\\Event\\Type\\NoneEvent'
+            'error' => 'Missing type property'
         ]);
     }
 
@@ -171,7 +170,7 @@ class EventApiCest
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            'error' => 'Unknown EventType class: App\\Domain\\Event\\Type\\NoneEvent'
+            'error' => 'Missing type property'
         ]);
     }
 }

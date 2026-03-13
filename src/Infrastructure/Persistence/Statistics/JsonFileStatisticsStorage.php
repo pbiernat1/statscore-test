@@ -1,9 +1,7 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Statistics;
-
-use App\Infrastructure\Persistence\Event\EventStorageInterface;
-use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
 
 class JsonFileStatisticsStorage implements StatisticsStorageInterface
 {

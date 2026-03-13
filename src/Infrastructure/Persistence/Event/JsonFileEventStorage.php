@@ -13,7 +13,7 @@ class JsonFileEventStorage implements EventStorageInterface
     ) {
         $directory = dirname($filePath);
         if (!is_dir($directory)) {
-            mkdir($directory, 0777, true);
+            mkdir($directory, 0755, true);
         }
     }
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Statistics;
 
@@ -12,7 +13,7 @@ class RedisStatisticsStorage implements StatisticsStorageInterface
     {
     }
 
-    public function updateTeamStatistics(string $matchId, string $teamId, string $eventType, int $value = 1): void
+    public function updateTeamStatistics(string $matchId, string $teamId, string $eventType): void
     {
         $key = $this->buildKey($matchId, $teamId);
 

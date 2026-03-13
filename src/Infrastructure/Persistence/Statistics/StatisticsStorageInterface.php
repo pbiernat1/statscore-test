@@ -10,7 +10,7 @@ interface StatisticsStorageInterface
 
     public const TYPE_FOULS = 'fouls';
 
-    public function updateTeamStatistics(string $matchId, string $teamId, string $eventType, int $value = 1): void;
+    public function updateTeamStatistics(string $matchId, string $teamId, string $eventType): void;
 
     public function getTeamStatistics(string $matchId, string $teamId): array;
 

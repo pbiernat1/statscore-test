@@ -9,13 +9,13 @@ use Predis\Client as RedisClient;
 
 class RedisEventStorage implements EventStorageInterface
 {
-    private const PATTERN_LIST_MATCH  = 'football:events:%s';
+    public const PATTERN_LIST_MATCH  = 'football:events:%s';
 
-    private const PATTERN_LIST_GLOBAL = 'football:events:all';
+    public const PATTERN_LIST_GLOBAL = 'football:events:all';
 
-    private const PATTERN_STREAM_MATCH  = 'football:stream:%s';
+    public const PATTERN_STREAM_MATCH  = 'football:stream:%s';
 
-    private const PATTERN_STREAM_GLOBAL = 'football:stream:all';
+    public const PATTERN_STREAM_GLOBAL = 'football:stream:all';
 
     public function __construct(private readonly RedisClient $redis)
     {

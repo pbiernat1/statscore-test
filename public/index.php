@@ -5,10 +5,6 @@ use App\Application\Handlers\HttpErrorHandler;
 use App\Application\Handlers\ShutdownHandler;
 use App\Application\ResponseEmitter\ResponseEmitter;
 use App\Application\Settings\SettingsInterface;
-use App\Infrastructure\Persistence\Event\EventStorageInterface;
-use App\Infrastructure\Persistence\Event\JsonFileEventStorage;
-use App\Infrastructure\Persistence\Statistics\StatisticsStorageInterface;
-use App\Infrastructure\Persistence\Statistics\JsonFileStatisticsStorage;
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
@@ -36,14 +32,6 @@ $repositories($containerBuilder);
 
 // Build PHP-DI Container instance
 $container = $containerBuilder->build();
-
-// $container->set(EventStorageInterface::class, function () {
-// 	return new JsonFileEventStorage(__DIR__ . '/../storage/events.txt');
-// });
-
-// $container->set(StatisticsStorageInterface::class, function () {
-// 	return new JsonFileStatisticsStorage(__DIR__ . '/../storage/statistics.txt');
-// });
 
 // Instantiate the app
 $app = AppFactory::createFromContainer($container);

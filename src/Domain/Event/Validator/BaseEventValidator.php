@@ -1,16 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Domain\Event;
+namespace App\Domain\Event\Validator;
 
-class EventValidator
+class BaseEventValidator implements ValidatorInterface
 {
     /**
-     * @param array $event
-     * @throws \InvalidArgumentException
-     * @return void
+     * {@inheritDoc}
      */
-    public function validate(array $event)
+    public function validate(array $event): void
     {
         if (!isset($event['type'])) {
             throw new \InvalidArgumentException('Missing required key: type');

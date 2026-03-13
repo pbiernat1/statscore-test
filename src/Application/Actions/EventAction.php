@@ -30,6 +30,9 @@ class EventAction extends Action
         }
 
         try {
+            $validator = EventFactory::createValidator($event['type'] ?? 'none');
+            $validator->validate($event);
+
             $event = EventFactory::fromArray($event);
             $result = $this->handler->handleEvent($event);
 

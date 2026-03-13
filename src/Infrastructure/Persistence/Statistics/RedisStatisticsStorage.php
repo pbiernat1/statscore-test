@@ -23,15 +23,23 @@ class RedisStatisticsStorage implements StatisticsStorageInterface
     public function getMatchStatistics(string $matchId): array
     {
         $key = $this->buildKey($matchId, '*');
-        $keys = $this->redis->keys($key);
-        $stats = [];
+        $cursor = 0;
+        $allKeys = [];
 
-        foreach ($keys as $key) {
+        do {
+            [$cursor, $batch] = $this->redis->scan($cursor, [
+                'MATCH' => $key,
+                'COUNT' => 100,
+            ]);
+            $allKeys = array_merge($allKeys, $batch);
+        } while ($cursor !== '0');
+
+        $stats = [];
+        foreach ($allKeys as $key) {
             $parts = explode(':', $key);
             $teamId = end($parts);
-            $data = $this->redis->hgetall($key);
 
-            $stats[$teamId] = $this->castIntegers($data);
+            $stats[$teamId] = $this->castIntegers($this->redis->hgetall($key));
         }
 
         return $stats;

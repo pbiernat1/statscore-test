@@ -39,7 +39,7 @@ class RedisEventStorage implements EventStorageInterface
     {
         $items  = $this->redis->lrange(self::PATTERN_LIST_GLOBAL, 0, -1);
 
-        return array_map(function (string $item) {
+        return array_map(function (string $item): Event {
             $data = json_decode($item, true);
 
             return EventFactory::fromArray($data);

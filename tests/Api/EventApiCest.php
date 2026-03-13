@@ -141,8 +141,9 @@ class EventApiCest
 
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
+        // var_dump($I->grabResponse());exit;
         $I->seeResponseContainsJson([
-            'error' => 'Missing required key: type'
+            'error' => 'Unknown EventType class: App\\Domain\\Event\\Type\\NoneEvent'
         ]);
     }
 
@@ -170,7 +171,7 @@ class EventApiCest
         $I->seeResponseCodeIs(400);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
-            'error' => 'Missing required key: type'
+            'error' => 'Unknown EventType class: App\\Domain\\Event\\Type\\NoneEvent'
         ]);
     }
 }

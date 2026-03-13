@@ -33,13 +33,11 @@ class EventAction extends Action
         }
 
         try {
-            $validator = new BaseEventValidator();
-            // $validator = new GoalEventDecorator($validator);
-            $validator = new FoulEventDecorator($validator);
+            $validator = EventFactory::createValidator($event['type'] ?? 'none');
             $validator->validate($event);
 
             $event = EventFactory::fromArray($event);
-            $result = $this->handler->handleEvent( $event);
+            $result = $this->handler->handleEvent($event);
 
             return $this->respondWithData($result, 201);
         } catch (\Exception $e) {

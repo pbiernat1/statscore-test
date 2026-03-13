@@ -20,6 +20,8 @@ class EventFactory
         }
 
         $eventClassName = static::createEventTypeClassName($data['type']);
+        $validator = static::createValidator($data['type'] ?? 'none');
+        $validator->validate($data);
 
         switch ($eventClassName) {
             case GoalEvent::class:
@@ -31,7 +33,7 @@ class EventFactory
                     $data['minute'],
                     $data['second']
                 );
-            default:
+            case FoulEvent::class:
                 return new FoulEvent(
                     $data['player'],
                     $data['affected_player'],
@@ -40,6 +42,8 @@ class EventFactory
                     $data['minute'],
                     $data['second']
                 );
+            default:
+                throw new \InvalidArgumentException(sprintf('Unknown event type passed: %s', $eventClassName));
         }
     }
 

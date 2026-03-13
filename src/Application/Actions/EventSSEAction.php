@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Application\Actions;
 
 use App\Infrastructure\Persistence\Event\RedisEventPublisher;
+use App\Infrastructure\Persistence\Event\RedisEventStorage;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 
@@ -38,8 +39,8 @@ class EventSSEAction extends Action
         flush();
 
         $channel = $matchId
-            ? sprintf(RedisEventPublisher::CHANNEL_MATCH, $matchId)
-            : RedisEventPublisher::CHANNEL_GLOBAL;
+            ? sprintf(RedisEventStorage::PATTERN_STREAM_MATCH, $matchId)
+            : RedisEventStorage::PATTERN_STREAM_GLOBAL;
 
         $this->publisher->subscribe($channel, function (string $eventJson) use ($body): void {
             $body->write($this->formatSseMessage('football_event', $eventJson));

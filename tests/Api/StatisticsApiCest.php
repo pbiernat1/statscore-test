@@ -45,7 +45,6 @@ class StatisticsApiCest
 
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
-        // var_dump($I->grabResponse());exit;
         $I->seeResponseContainsJson([
             'match_id' => 'm1',
             'team_id' => 'arsenal',

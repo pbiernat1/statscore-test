@@ -5,10 +5,7 @@ namespace App\Application\Actions;
 
 use App\Application\Actions\Action;
 use App\Domain\Event\EventFactory;
-use App\Domain\Event\Validator\BaseEventValidator;
 use App\Domain\Event\EventHandler;
-use App\Domain\Event\Validator\FoulEventDecorator;
-use App\Domain\Event\Validator\GoalEventDecorator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 
@@ -33,15 +30,14 @@ class EventAction extends Action
         }
 
         try {
-            $validator = EventFactory::createValidator($event['type'] ?? 'none');
-            $validator->validate($event);
-
             $event = EventFactory::fromArray($event);
             $result = $this->handler->handleEvent($event);
 
             return $this->respondWithData($result, 201);
-        } catch (\Exception $e) {
+        } catch (\InvalidArgumentException $e) {
             return $this->respondWithData(['error' => $e->getMessage()], 400);
+        } catch (\Exception $e) {
+            return $this->respondWithData(['error' => $e->getMessage()], 500);
         }
     }
 }

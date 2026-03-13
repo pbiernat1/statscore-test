@@ -18,7 +18,7 @@ class GoalEventValidatorTest extends TestCase
         $this->event = new GoalEvent('Test Player', 'Assisting Player', 'test_team', 'test_match', 40, 50);
     }
 
-    public function testMissingAffectedPlayerProperty()
+    public function testMissingAssistingPlayerProperty()
     {
         $validator = new BaseEventValidator();
         $validator = new GoalEventDecorator($validator);

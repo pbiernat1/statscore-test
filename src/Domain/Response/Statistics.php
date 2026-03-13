@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Response;
 
-class Statistics
+readonly class Statistics
 {
     public function __construct(
         public ?string $match_id = null,

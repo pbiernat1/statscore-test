@@ -31,7 +31,7 @@ class EventFactory
                     $data['minute'],
                     $data['second']
                 );
-            case FoulEvent::class:
+            default:
                 return new FoulEvent(
                     $data['player'],
                     $data['affected_player'],

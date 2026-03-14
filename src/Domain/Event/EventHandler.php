@@ -25,7 +25,7 @@ class EventHandler
         $eventType = match (get_class($event)) {
             GoalEvent::class => StatisticsStorageInterface::TYPE_GOALS,
             FoulEvent::class => StatisticsStorageInterface::TYPE_FOULS,
-            default => throw new \InvalidArgumentException('Unknown EventType'),
+            default => throw new \InvalidArgumentException('Unknown Event Type'),
         };
 
         $this->statsStorage->updateTeamStatistics(

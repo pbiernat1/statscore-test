@@ -19,7 +19,7 @@ class EventFactory
             throw new \InvalidArgumentException('Missing type property');
         }
 
-        $eventClassName = static::createEventTypeClassName($data['type']);
+        $eventClassName = self::createEventTypeClassName($data['type']);
 
         switch ($eventClassName) {
             case GoalEvent::class:
@@ -47,12 +47,13 @@ class EventFactory
 
     public static function createValidator(string $type): ValidatorInterface
     {
-        $eventClassName = static::createEventTypeClassName($type);
+        $eventClassName = self::createEventTypeClassName($type);
         $validator = new BaseEventValidator();
 
         $validator = match ($eventClassName) {
             GoalEvent::class => new GoalEventDecorator($validator),
             FoulEvent::class => new FoulEventDecorator($validator),
+            default => throw new \InvalidArgumentException('Unsupported Validator Decorator')
         };
 
         return $validator;
